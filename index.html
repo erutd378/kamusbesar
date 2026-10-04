@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamus Inggris-Indonesia | Login</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 20% 20%, #1e3c72, #0a0f1f 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  /* ================= LOGIN PAGE ================= */
+  #loginPage {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+  }
+
+  .sphere {
+    width: 160px;
+    height: 160px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: spinSphere 12s linear infinite;
+    margin-bottom: 45px;
+  }
+
+  @keyframes spinSphere {
+    from { transform: rotateX(0deg) rotateY(0deg); }
+    to   { transform: rotateX(360deg) rotateY(360deg); }
+  }
+
+  .ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(0, 229, 255, 0.85);
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.7),
+                inset 0 0 25px rgba(0, 229, 255, 0.45);
+  }
+  .ring:nth-child(1) { transform: rotateY(0deg); }
+  .ring:nth-child(2) { transform: rotateY(60deg); }
+  .ring:nth-child(3) { transform: rotateY(120deg); }
+  .ring:nth-child(4) { transform: rotateX(90deg); }
+  .ring:nth-child(5) { transform: rotateX(90deg) rotateY(60deg); }
+  .ring:nth-child(6) { transform: rotateX(90deg) rotateY(120deg); }
+
+  .sphere-core {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 55px; height: 55px;
+    margin: -27.5px 0 0 -27.5px;
+    background: radial-gradient(circle, #00e5ff, #005f7a);
+    border-radius: 50%;
+    box-shadow: 0 0 40px #00e5ff;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: .75; }
+  }
+
+  .login-card {
+    width: 360px;
+    padding: 35px 30px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 18px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+    text-align: center;
+  }
+
+  .login-card h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: #00e5ff;
+  }
+  .login-card p.sub {
+    font-size: 12px;
+    color: #a9c7d6;
+    margin-bottom: 25px;
+  }
+
+  .input-group {
+    position: relative;
+    margin-bottom: 18px;
+    text-align: left;
+  }
+  .input-group label {
+    font-size: 12px;
+    color: #9fc6d8;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 229, 255, .35);
+    background: rgba(0, 0, 0, .35);
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: .25s;
+  }
+  .input-group input:focus {
+    border-color: #00e5ff;
+    box-shadow: 0 0 12px rgba(0, 229, 255, .55);
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 13px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00e5ff, #0072ff);
+    color: #00131c;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .25s;
+  }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 229, 255, .6);
+  }
+
+  .error-msg {
+    color: #ff6b81;
+    font-size: 12.5px;
+    margin-top: 14px;
+    min-height: 16px;
+    opacity: 0;
+    transition: .3s;
+  }
+  .error-msg.show { opacity: 1; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-8px); }
+    40%,80% { transform: translateX(8px); }
+  }
+  .shake { animation: shake .45s; }
+
+  /* ================= DASHBOARD PAGE ================= */
+  #dashboard {
+    display: none;
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 40px;
+    background: radial-gradient(circle at 80% 10%, #16324f, #0a0f1f 75%);
+    overflow-y: auto;
+  }
+
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 229, 255, .25);
+    padding-bottom: 18px;
+  }
+  .dash-header h1 {
+    font-size: 24px;
+    color: #00e5ff;
+  }
+  .dash-header h1 span { color: #fff; }
+
+  .btn-logout {
+    padding: 9px 20px;
+    border: 1px solid #ff6b81;
+    background: transparent;
+    color: #ff6b81;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .25s;
+  }
+  .btn-logout:hover {
+    background: #ff6b81;
+    color: #0a0f1f;
+  }
+
+  .search-box {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .search-box input {
+    flex: 1;
+    min-width: 240px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 229, 255, .35);
+    background: rgba(0, 0, 0, .35);
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+  }
+  .search-box input:focus {
+    border-color: #00e5ff;
+    box-shadow: 0 0 14px rgba(0, 229, 255, .45);
+  }
+
+  .btn-translate {
+    padding: 14px 26px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00e5ff, #0072ff);
+    color: #00131c;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s;
+  }
+  .btn-translate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 229, 255, .55);
+  }
+
+  .btn-switch {
+    padding: 14px 20px;
+    border: 1px solid #00e5ff;
+    border-radius: 12px;
+    background: transparent;
+    color: #00e5ff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s;
+  }
+  .btn-switch:hover { background: rgba(0,229,255,.15); }
+
+  .result-card {
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(0, 229, 255, .28);
+    border-radius: 16px;
+    padding: 26px 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+  }
+  .result-card .label {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: #7fd8ea;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .result-card .value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 18px;
+  }
+  .result-card .value.placeholder {
+    font-size: 16px;
+    font-weight: 400;
+    color: #8aa5b3;
+  }
+
+  .history-title {
+    font-size: 15px;
+    color: #7fd8ea;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background: rgba(0, 229, 255, .06);
+    border-left: 3px solid #00e5ff;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .history-item .arrow { color: #00e5ff; margin: 0 10px; }
+  .history-item .en { color: #cfe9f3; }
+  .history-item .id { color: #00e5ff; font-weight: 600; }
+
+  /* ================= MODAL WEB RAHASIA ================= */
+  #secretOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .85);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+  }
+  #secretOverlay.active { display: flex; }
+
+  .secret-box {
+    width: 100%;
+    max-width: 1100px;
+    height: 90vh;
+    background: #0d1524;
+    border: 2px solid #00e5ff;
+    border-radius: 16px;
+    box-shadow: 0 0 45px rgba(0, 229, 255, .6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: zoomIn .35s ease;
+  }
+  @keyframes zoomIn {
+    from { transform: scale(.85); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
+  .secret-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: linear-gradient(90deg, #003049, #005f7a);
+    color: #00e5ff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 14px;
+  }
+  .secret-header button {
+    background: #ff6b81;
+    border: none;
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: .25s;
+  }
+  .secret-header button:hover { background: #ff3d5a; }
+
+  .secret-box iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  @media (max-width: 560px) {
+    #dashboard { padding: 20px; }
+    .result-card .value { font-size: 20px; }
+    .btn-translate, .btn-switch { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+<div id="loginPage">
+  <div class="sphere">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="sphere-core"></div>
+  </div>
+
+  <div class="login-card" id="loginCard">
+    <h1>KAMUS DIGITAL</h1>
+    <p class="sub">Inggris &mdash; Indonesia</p>
+
+    <div class="input-group">
+      <label>Kode Akses</label>
+      <input type="text" id="kodeInput" placeholder="Masukkan kode akses" autocomplete="off" inputmode="numeric">
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="passInput" placeholder="Masukkan password" autocomplete="off">
+    </div>
+
+    <button class="btn-login" onclick="prosesLogin()">MASUK</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD PAGE ================= -->
+<div id="dashboard">
+  <div class="dash-header">
+    <h1>Dashboard <span>Kamus Inggris - Indonesia</span></h1>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Ketik kata dalam bahasa Inggris..." onkeydown="if(event.key==='Enter') terjemahkan()">
+    <button class="btn-switch" onclick="toggleArah()" id="btnArah">EN → ID</button>
+    <button class="btn-translate" onclick="terjemahkan()">Terjemahkan</button>
+  </div>
+
+  <div class="result-card">
+    <div class="label">Hasil Terjemahan</div>
+    <div class="value placeholder" id="hasilValue">Belum ada terjemahan...</div>
+  </div>
+
+  <div class="history-title">Riwayat Pencarian</div>
+  <div class="history-list" id="historyList">
+    <div class="history-item"><span style="color:#8aa5b3;">Belum ada riwayat pencarian.</span></div>
+  </div>
+</div>
+
+<!-- ================= MODAL WEB RAHASIA (tersembunyi) ================= -->
+<div id="secretOverlay">
+  <div class="secret-box">
+    <div class="secret-header">
+      <span>🔒 AKSES KHUSUS</span>
+      <button onclick="tutupSecret()">TUTUP ✕</button>
+    </div>
+    <iframe id="secretFrame" src="about:blank"></iframe>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   KONFIGURASI KATA KUNCI RAHASIA
+   ============================================================ */
+const KATA_KUNCI_RAHASIA = "POLISIBODOH";
+const LINK_RAHASIA       = "https://khususlink.vercel.app/";
+
+/* ============================================================
+   DATA KAMUS
+   ============================================================ */
+const kamusEN_ID = {
+  "hello": "halo",
+  "good morning": "selamat pagi",
+  "good night": "selamat malam",
+  "thank you": "terima kasih",
+  "you're welcome": "sama-sama",
+  "how are you": "apa kabar",
+  "i love you": "aku cinta kamu",
+  "book": "buku",
+  "pen": "pulpen",
+  "table": "meja",
+  "chair": "kursi",
+  "house": "rumah",
+  "car": "mobil",
+  "water": "air",
+  "food": "makanan",
+  "rice": "nasi",
+  "bread": "roti",
+  "milk": "susu",
+  "coffee": "kopi",
+  "tea": "teh",
+  "friend": "teman",
+  "family": "keluarga",
+  "father": "ayah",
+  "mother": "ibu",
+  "brother": "saudara laki-laki",
+  "sister": "saudara perempuan",
+  "teacher": "guru",
+  "student": "murid",
+  "doctor": "dokter",
+  "police": "polisi",
+  "city": "kota",
+  "village": "desa",
+  "country": "negara",
+  "school": "sekolah",
+  "market": "pasar",
+  "hospital": "rumah sakit",
+  "happy": "senang",
+  "sad": "sedih",
+  "angry": "marah",
+  "tired": "lelah",
+  "hungry": "lapar",
+  "thirsty": "haus",
+  "beautiful": "cantik",
+  "handsome": "tampan",
+  "big": "besar",
+  "small": "kecil",
+  "fast": "cepat",
+  "slow": "lambat",
+  "hot": "panas",
+  "cold": "dingin",
+  "new": "baru",
+  "old": "lama",
+  "good": "baik",
+  "bad": "buruk",
+  "eat": "makan",
+  "drink": "minum",
+  "sleep": "tidur",
+  "run": "berlari",
+  "walk": "berjalan",
+  "read": "membaca",
+  "write": "menulis",
+  "speak": "berbicara",
+  "listen": "mendengar",
+  "see": "melihat",
+  "buy": "membeli",
+  "sell": "menjual",
+  "go": "pergi",
+  "come": "datang",
+  "today": "hari ini",
+  "tomorrow": "besok",
+  "yesterday": "kemarin",
+  "morning": "pagi",
+  "afternoon": "siang",
+  "evening": "sore",
+  "night": "malam",
+  "one": "satu",
+  "two": "dua",
+  "three": "tiga",
+  "four": "empat",
+  "five": "lima",
+  "red": "merah",
+  "blue": "biru",
+  "green": "hijau",
+  "yellow": "kuning",
+  "black": "hitam",
+  "white": "putih"
+};
+
+const kamusID_EN = {};
+for (const en in kamusEN_ID) {
+  const id = kamusEN_ID[en];
+  if (!kamusID_EN[id]) kamusID_EN[id] = en;
+}
+
+/* ============================================================
+   LOGIN  — KODE ANGKA & PASSWORD
+   ============================================================ */
+const KODE_BENAR = "7890";
+const PASS_BENAR = "7890@";
+
+function prosesLogin() {
+  const kode = document.getElementById('kodeInput').value.trim();
+  const pass = document.getElementById('passInput').value.trim();
+  const err  = document.getElementById('errorMsg');
+  const card = document.getElementById('loginCard');
+
+  if (kode === KODE_BENAR && pass === PASS_BENAR) {
+    err.classList.remove('show');
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('searchInput').focus();
+  } else {
+    err.textContent = "❌ Kode akses atau password salah!";
+    err.classList.add('show');
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+  }
+}
+
+function logout() {
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('kodeInput').value = '';
+  document.getElementById('passInput').value = '';
+  document.getElementById('errorMsg').classList.remove('show');
+  resetDashboard();
+}
+
+/* ============================================================
+   DASHBOARD KAMUS
+   ============================================================ */
+let arah = "EN_ID";
+let riwayat = [];
+
+function toggleArah() {
+  arah = (arah === "EN_ID") ? "ID_EN" : "EN_ID";
+  const btn = document.getElementById('btnArah');
+  const input = document.getElementById('searchInput');
+  if (arah === "EN_ID") {
+    btn.textContent = "EN → ID";
+    input.placeholder = "Ketik kata dalam bahasa Inggris...";
+  } else {
+    btn.textContent = "ID → EN";
+    input.placeholder = "Ketik kata dalam bahasa Indonesia...";
+  }
+  input.value = '';
+  input.focus();
+  resetHasil();
+}
+
+function resetHasil() {
+  const el = document.getElementById('hasilValue');
+  el.textContent = "Belum ada terjemahan...";
+  el.classList.add('placeholder');
+}
+
+function resetDashboard() {
+  resetHasil();
+  riwayat = [];
+  renderRiwayat();
+  document.getElementById('searchInput').value = '';
+}
+
+function terjemahkan() {
+  const input = document.getElementById('searchInput').value.trim();
+  const hasilEl = document.getElementById('hasilValue');
+
+  if (!input) {
+    hasilEl.textContent = "⚠️ Silakan masukkan kata terlebih dahulu.";
+    hasilEl.classList.add('placeholder');
+    return;
+  }
+
+  /* ============================================================
+     CEK KATA KUNCI RAHASIA
+     ============================================================ */
+  if (input.toUpperCase() === KATA_KUNCI_RAHASIA) {
+    hasilEl.textContent = "🔓 Membuka akses khusus...";
+    hasilEl.classList.remove('placeholder');
+    bukaSecret();
+    return;
+  }
+
+  /* ============================================================
+     PENCARIAN KAMUS NORMAL
+     ============================================================ */
+  const kata = input.toLowerCase();
+  let hasil = null;
+  let dari, ke;
+
+  if (arah === "EN_ID") {
+    hasil = kamusEN_ID[kata];
+    dari = kata;
+    ke = hasil;
+  } else {
+    hasil = kamusID_EN[kata];
+    dari = kata;
+    ke = hasil;
+  }
+
+  if (hasil) {
+    hasilEl.textContent = hasil;
+    hasilEl.classList.remove('placeholder');
+    tambahRiwayat(dari, ke, arah);
+  } else {
+    hasilEl.textContent = "❌ Kata tidak ditemukan dalam kamus.";
+    hasilEl.classList.add('placeholder');
+  }
+}
+
+function tambahRiwayat(dari, ke, arah) {
+  riwayat.unshift({ dari, ke, arah });
+  if (riwayat.length > 8) riwayat.pop();
+  renderRiwayat();
+}
+
+function renderRiwayat() {
+  const list = document.getElementById('historyList');
+  if (riwayat.length === 0) {
+    list.innerHTML = '<div class="history-item"><span style="color:#8aa5b3;">Belum ada riwayat pencarian.</span></div>';
+    return;
+  }
+  list.innerHTML = riwayat.map(r => `
+    <div class="history-item">
+      <span class="en">${r.dari}</span>
+      <span class="arrow">→</span>
+      <span class="id">${r.ke}</span>
+    </div>`).join('');
+}
+
+/* ============================================================
+   MODAL WEB RAHASIA
+   ============================================================ */
+function bukaSecret() {
+  const overlay = document.getElementById('secretOverlay');
+  const frame   = document.getElementById('secretFrame');
+  frame.src = LINK_RAHASIA;
+  overlay.classList.add('active');
+}
+
+function tutupSecret() {
+  const overlay = document.getElementById('secretOverlay');
+  const frame   = document.getElementById('secretFrame');
+  overlay.classList.remove('active');
+  frame.src = "about:blank";
+  document.getElementById('searchInput').value = '';
+  resetHasil();
+}
+
+document.getElementById('secretOverlay').addEventListener('click', function(e) {
+  if (e.target === this) tutupSecret();
+});
+
+window.addEventListener('load', () => {
+  document.getElementById('kodeInput').focus();
+});
+</script>
+</body>
+</html>
